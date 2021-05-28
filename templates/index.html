@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			Etusivu
+		</title>
+		<link rel="stylesheet" type="text/css" href="static/style.css">
+	</head>
+	<body>
+		<div class="header">
+			<div class="header-image"></div>
+			<h1>
+				Työaikakirjanpito
+			</h1>
+			<div class="header-image"></div>
+		</div>
+		<h2>
+			Tervetuloa pitämään kirjaa töistäsi!
+		</h2>
+		<p>
+			Tällä sovelluksella voit
+		</p>
+		<ul>
+			{% for item in items %}
+			<li>{{ item }} {% endfor %}
+			</li>
+		</ul>
+	</body>
+</html>
