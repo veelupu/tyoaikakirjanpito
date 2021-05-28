@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>
-			Etusivu
+			Kirjaudu
 		</title>
 		<link rel="stylesheet" type="text/css" href="static/style.css">
 	</head>
@@ -26,5 +26,16 @@
 			<li>{{ item }} {% endfor %}
 			</li>
 		</ul>
+		{% if session.username %}
+		<p>Moikka {{ session.username }}! Klikkaa <a href="/home">tästä</a>, niin voit aloittaa työajan kirjaamisen, tai <a href="/logout">kirjaudu ulos</a>.</p>
+		{% else %}
+		<form action="/login" method="POST">
+		<p>Käyttäjätunnus:<br>
+		<input type="text" name="username"></p>
+		<p>Salasana:<br>
+		<input type="password" name="password"></p>
+		<input type="submit" text="Kirjaudu" class="is-circle">
+		</form>
+		{% endif %}
 	</body>
 </html>

@@ -13,3 +13,12 @@ h1 {
 	font-family: 'Nadeem';
 	font-size: 3em;
 }
+
+is-circle {
+	display:block;
+	height: 60px;
+	width: 60px;
+	border-radius: 50%;
+	border: 1px solid red;
+  
+}
