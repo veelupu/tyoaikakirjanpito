@@ -1,0 +1,15 @@
+.header {
+	background-color: #C3E69C;
+}
+
+.header-image {
+	background-image: url("clock.svg");
+	background-repeat: repeat-x;
+	height: 8em;
+}
+
+h1 {
+	text-align: center;
+	font-family: 'Nadeem';
+	font-size: 3em;
+}
