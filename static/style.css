@@ -1,3 +1,8 @@
+body {
+    margin: auto;
+    max-width: 55em;
+}
+
 .header {
 	background-color: #C3E69C;
 }
@@ -14,11 +19,24 @@ h1 {
 	font-size: 3em;
 }
 
-is-circle {
-	display:block;
-	height: 60px;
-	width: 60px;
-	border-radius: 50%;
-	border: 1px solid red;
-  
+nav li{
+	display: inline-block;
+	padding: 1em;
+	border-radius: 0.5em;
+	border: 1px solid #94AD76;
+	background-color: #94AD76;
+	font-size: 1em;
+	font-family: 'Nadeem';
+	text-aligg: center;
+	box-shadow: 2px 2px 20px -9px;
+}
+
+nav li a {
+    text-decoration: none;
+    color: #000;
+}
+
+nav li:hover {
+	background-color: #A9C787;
+	cursor: pointer;
 }
