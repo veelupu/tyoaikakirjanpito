@@ -1,4 +1,6 @@
-# Copyright (c) 2021 Veera Lupunen
+-- Copyright (c) 2021 Veera Lupunen
+
+BEGIN;
 
 CREATE TABLE IF NOT EXISTS users (
 	id SERIAL PRIMARY KEY, 
@@ -23,3 +25,5 @@ CREATE TABLE IF NOT EXISTS users_entry (
 CREATE TABLE IF NOT EXISTS task_entry (
 	t_id INTEGER REFERENCES task(id) ON UPDATE CASCADE ON DELETE CASCADE, 
 	e_id INTEGER REFERENCES entry(id) ON UPDATE CASCADE ON DELETE CASCADE);	
+	
+COMMIT;
