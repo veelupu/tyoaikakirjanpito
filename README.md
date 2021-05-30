@@ -10,7 +10,7 @@ Käyttäjä voi selata menneitä työajantallennuksia. Tallennuksia voi järjest
 
 ## Nykyinen tilanne
 
-Sovelluksesta on toteutettu suurin osa rakenteesta: Sovellukseen pääsee kirjautumaan sisään, ja sovelluksessa voi navigoida Tallenna- ja Selaa-sivuille. Tallenna-sivulla voi valita työtehtävän ja aloittaa tallennuksen sekä pysäyttää tallennuksen. Sovellus ei vielä tallenna työaikakirjanpitoa tietokantaan. Sovelluksesta voi myös kirjautua ulos.
+Sovelluksesta on toteutettu suurin osa rakenteesta: Sovellukseen pääsee kirjautumaan sisään, ja sovelluksessa voi navigoida Tallenna- ja Selaa-sivuille. Tallenna-sivulla voi valita työtehtävän ja aloittaa tallennuksen sekä pysäyttää tallennuksen. Sovellus ei vielä tallenna työaikakirjanpitoa tietokantaan, vaikka tietokanta tauluineen onkin jo luotu. Sovelluksesta voi myös kirjautua ulos.
 
 Sovellusta voi testata [Herokussa](https://tsoha-tyoaikakirjanpito.herokuapp.com). Kirjautumiseen käytetään tunnusta "kokeilija" ja salasanaa "kokeilen". Nämä on tallennettu tietokantaan.
 
