@@ -48,6 +48,18 @@ def home():
     
 @app.route("/record", methods=["GET", "POST"])
 def record():
+    if request.method == "GET":
+        return render_template("record.html")
+    elif request.method == "POST":
+        # ***PUUTTUU*** tietokantaan tallentaminen
+        session["running"] = True
+        tasks = request.form.getlist("task")
+        return render_template("record.html", tasks=tasks)
+        
+@app.route("/stop-recording", methods=["POST"])
+def stop_recording():
+    # ***PUUTTUU*** tietokantaan tallentaminen
+    session["running"] = False
     return render_template("record.html")
     
 @app.route("/browse")

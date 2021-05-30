@@ -7,16 +7,22 @@
 	</head>
 	<body>
 		{% block content %}
+		{% if session.running %}
+		<p>Tallennus käynnissä! Meneillään olevat työtehtävät: {{ tasks }}.</p>
+		{% endif %}
 		<form action="/record" method="POST">
 		Valitse työtehtävät:
 		<p>
-			<input type="checkbox" name="task" value="a"> sähköposti
-			<input type="checkbox" name="task" value="b"> pöytäkirja
-			<input type="checkbox" name="task" value="c"> kokous
+			<input type="checkbox" name="task" value="sähköposti"> sähköposti
+			<input type="checkbox" name="task" value="pöytäkirja"> pöytäkirja
+			<input type="checkbox" name="task" value="kokous"> kokous
 		<p>
 			<button type="button">Lisää uusi työtehtävä</button>		
 		<br>
-		<input type="submit" value="Aloita tallennus">
+		<button type="submit">Aloita tallennus</button>
+		</form>
+		<form action="/stop-recording" method="POST">
+			<button type="submit">Lopeta tallennus</button>
 		</form>
 		{% endblock %}
 	</body>
