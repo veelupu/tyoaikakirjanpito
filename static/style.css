@@ -40,3 +40,17 @@ nav li:hover {
 	background-color: #A9C787;
 	cursor: pointer;
 }
+
+button {
+	height: 80px;
+	width: 80px;
+	border-radius: 50%;
+	border: 1px solid #94AD76;
+	background-color: #94AD76;
+	font-size: 0.75em;
+	box-shadow: 2px 2px 20px -9px;
+}
+
+button:hover {
+	background-color: #A9C787;
+	cursor: pointer;

@@ -41,6 +41,12 @@ def logout():
     del session["username"]
     return redirect("/")
     
-@app.route("/home")
+@app.route("/home", methods=["POST", "GET"])
 def home():
     return render_template("home.html")
+    
+@app.route("/record", methods=["GET", "POST"])
+def record():
+    return render_template("record.html")
+    
+    
