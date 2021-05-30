@@ -33,7 +33,7 @@ def login():
         else:
             options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
             return render_template("index.html", items=options, message=("Oijoi! Tarkista, että kirjoitit salasanasi oikein."))          
-    # ***PUUTTUU****: TUNNUKSEN KRYPTAAMINEN
+    # ***PUUTTUU**** TUNNUKSEN KRYPTAAMINEN
     
 
 @app.route("/logout")
@@ -43,10 +43,14 @@ def logout():
     
 @app.route("/home", methods=["POST", "GET"])
 def home():
-    return render_template("home.html")
+    hours = [5, 34, 125, 876]
+    return render_template("home.html", hours=hours)
     
 @app.route("/record", methods=["GET", "POST"])
 def record():
     return render_template("record.html")
     
+@app.route("/browse")
+def browse():
+    return render_template("browse.html")
     
