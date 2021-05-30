@@ -2,30 +2,22 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>
-			Tallenna
-		</title>
-		<link rel="stylesheet" type="text/css" href="static/style.css">
+		{% extends "layout.html" %}
+		{% block title %}Tallenna{% endblock %}
 	</head>
 	<body>
-		<div class="header">
-			<div class="header-image"></div>
-			<h1>
-				Työaikakirjanpito
-			</h1>
-			<div class="header-image"></div>
-		</div>
-		<br>
+		{% block content %}
 		<form action="/record" method="POST">
 		Valitse työtehtävät:
 		<p>
-		<input type="checkbox" name="task" value="a"> sähköposti
-		<input type="checkbox" name="task" value="b"> pöytäkirja
-		<input type="checkbox" name="task" value="c"> kokous
+			<input type="checkbox" name="task" value="a"> sähköposti
+			<input type="checkbox" name="task" value="b"> pöytäkirja
+			<input type="checkbox" name="task" value="c"> kokous
 		<p>
-		<button type="button">Lisää uusi työtehtävä</button>		
+			<button type="button">Lisää uusi työtehtävä</button>		
 		<br>
 		<input type="submit" value="Aloita tallennus">
 		</form>
+		{% endblock %}
 	</body>
-	</html>
+</html>

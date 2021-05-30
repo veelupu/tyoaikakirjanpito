@@ -2,28 +2,12 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>
-			Etusivu
-		</title>
-		<link rel="stylesheet" type="text/css" href="static/style.css">
+		{% extends "layout.html" %}
+		{% block title %}Etusivu{% endblock %}
 	</head>
 	<body>
-		<div class="header">
-			<div class="header-image"></div>
-			<h1>
-				Työaikakirjanpito
-			</h1>
-			<div class="header-image"></div>
-		</div>
+		{% block content %}
 		<h2>Tervetuloa, {{ session.username }}!</h2>
-		<nav>
-		    <ul>
-		      <li><a href="/record">Tallenna</a></li>
-		      <li><a href="#">Selaa</a></li>
-		      <li><a href="#">Hallitse</a></li>
-			  <li><a href="/logout">Kirjaudu ulos</a></li>
-		    </ul>
-		  </nav>
-		</div>
+		{% endblock %}
 	</body>
 </html>
