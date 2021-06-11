@@ -51,22 +51,20 @@ def record():
     if request.method == "GET":
         return render_template("record.html")
     elif request.method == "POST":
-        # ***PUUTTUU*** tietokantaan tallentaminen
         session["running"] = True
         
         # luo entry-tauluun tämä tallennus käyttämällä sql-aikaleimaa ja muistiinpanoja
         # ***PUUTTUU*** muistiinpanojenkirjoitusmahdollisuus
-        sql = "INSERT INTO entry (time_beg, paused, notes) VALUES(CURRENT_TIMESTAMP, false, 'no notes') RETURNING id"
+        notes = request.form["notes"]
+        sql = "INSERT INTO entry (time_beg, paused, notes) VALUES(CURRENT_TIMESTAMP, false, :notes) RETURNING id"
         
         # palauta juuri luodun tallennuksen id
-        result = db.session.execute(sql)
+        result = db.session.execute(sql, {"notes":notes})
         e_id = result.fetchone()[0]
         
         # käytä id:tä liitostaulun päivittämiseen
         tasks = request.form.getlist("task")
-        
         sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
-        # insert into task_entry (t_id, e_id) select id, 2 from task where content='pöytäkirja'
         db.session.execute(sql, {"e_id":e_id, "tasks":tasks})
         
         db.session.commit()
