@@ -46,8 +46,8 @@ def home():
     hours = [5, 34, 125, 876]
     return render_template("home.html", hours=hours)
     
-@app.route("/record", methods=["GET", "POST"])
-def record():
+@app.route("/start-recording", methods=["GET", "POST"])
+def start_recording():
     if request.method == "GET":
         return render_template("record.html")
     elif request.method == "POST":
@@ -62,17 +62,33 @@ def record():
         result = db.session.execute(sql, {"notes":notes})
         e_id = result.fetchone()[0]
         
+        #haetaan aloitusaika, jotta se voidaan näyttää sivulla
+        sql = "SELECT time_beg FROM entry WHERE id=(:id)"
+        result = db.session.execute(sql, {"id":e_id})
+        timebeg = result.fetchone()[0]
+        
         # käytä id:tä liitostaulun päivittämiseen
         tasks = request.form.getlist("task")
         sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
         db.session.execute(sql, {"e_id":e_id, "tasks":tasks})
         
         db.session.commit()
-        return render_template("record.html", tasks=tasks)
+        return render_template("record.html", tasks=tasks, timebeg=timebeg, id=e_id)
         
 @app.route("/stop-recording", methods=["POST"])
 def stop_recording():
     # ***PUUTTUU*** tietokantaan tallentaminen
+    session["running"] = False
+    return render_template("record.html")
+    
+@app.route("/pause-recording", methods=["POST"])
+def pause_recording():
+    # Haetaan käynnissä olevan tallennuksen id
+    id = int(request.form["id"])
+    
+    sql = "UPDATE entry SET paused=true WHERE id=(:id)"
+    db.session.execute(sql, {"id":id})
+    db.session.commit()
     session["running"] = False
     return render_template("record.html")
     
