@@ -25,6 +25,7 @@ def login():
     sql = "SELECT password FROM users WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
     user = result.fetchone()
+    
     if user == None:
         return render_template("index.html", items=options, message=("Oijoi, jotain meni pieleen! Tarkista, että kirjoitit tunnuksesi oikein."))
     else:
@@ -51,10 +52,11 @@ def register():
     options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
     username = request.form["username"]
     
-    sql = "SELECT EXISTS(SELECT 1 FROM users WHERE username=(:username))"
+    sql = "SELECT COUNT(id) FROM users WHERE username=(:username)"
     result = db.session.execute(sql, {"username":username})
+    count = result.fetchone()[0]
     
-    if result == False:
+    if count > 0:
         return render_template("index.html", items=options, message=("Voi harmi! Joku ehti jo varata tämän tunnuksen."))
     
     password1 = request.form["password1"]
@@ -173,4 +175,25 @@ def browse():
 @app.route("/settings")
 def manage_settings():
     return render_template("settings.html")
+    
+@app.route("/change-password")
+def change_password():
+    id = int(request.form["id"])
+    
+    # Haetaan tieto salasanasta tietokannasta
+    
+    password_old = request.form["password-old"]
+    
+    password_new1 = request.form["password-new1"]
+    password_new2 = request.form["password-new2"]
+
+#def fecth_password(id):
+    
+    
+    
+    
+    
+    
+    
+    
     
