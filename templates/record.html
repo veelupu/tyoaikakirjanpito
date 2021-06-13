@@ -1,48 +1,48 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		{% extends "layout.html" %}
-		{% block title %}Tallenna{% endblock %}
-	</head>
-	<body>
-		{% block content %}
-		{% if session.running %}
-		<p>Tallennus {{ status }}! Tallennus alkoi {{ timebeg }} ja sen id on {{ id }}. Meneillään olevat työtehtävät: {{ tasks }}.</p>
-		{% else %}
-		<p>Tallennus lopetettu. Teit töitä {{ tasks }} kello {{ timebeg }}–{{ time_end }}</p>
-		{% endif %}
-		<form action="/start-recording" method="POST">
-			Valitse työtehtävät:
-			<p>
-				<input type="checkbox" name="task" value="sähköposti"> sähköposti
-				<input type="checkbox" name="task" value="pöytäkirja"> pöytäkirja
-				<input type="checkbox" name="task" value="kokous"> kokous
-			</p>
-			Muistiinpanot:
-			<div>
-				<textarea name="notes" rows="5" cols="40"></textarea>
-			</div>
-			<br>
-			<div class="btn-group">
-				<button type="button">Lisää uusi työtehtävä</button>
-				<button type="submit">Aloita tallennus</button>
-			</div>
-		</form>
-		<div display: inline-block;>
-			<div><form action="/pause-recording" method="POST">
-				<button type="submit">Keskeytä tallennus</button>
-				<input type="hidden" name="id" value={{ id }}>
-			</form></div>
-			<div><form action="/continue-recording" method="POST">
-				<button type="submit">Jatka tallennusta</button>
-				<input type="hidden" name="id" value={{ id }}>
-			</form></div>
-			<div><form action="/stop-recording" method="POST">
-				<button type="submit">Lopeta tallennus</button>
-				<input type="hidden" name="id" value={{ id }}>
-			</form></div>
+<head>
+	<meta charset="UTF-8">
+	{% extends "layout.html" %}
+	{% block title %}Tallenna{% endblock %}
+</head>
+<body>
+	{% block content %}
+	{% if session.running %}
+	<p>Tallennus {{ status }}! Tallennus alkoi {{ timebeg }} ja sen id on {{ id }}. Meneillään olevat työtehtävät: {{ tasks }}.</p>
+	{% else %}
+	<p>Tallennus lopetettu. Teit töitä {{ tasks }} kello {{ timebeg }}–{{ time_end }}</p>
+	{% endif %}
+	<form action="/start-recording" method="POST">
+		Valitse työtehtävät:
+		<p>
+			<input type="checkbox" name="task" value="sähköposti"> sähköposti
+			<input type="checkbox" name="task" value="pöytäkirja"> pöytäkirja
+			<input type="checkbox" name="task" value="kokous"> kokous
+		</p>
+		Muistiinpanot:
+		<div>
+			<textarea name="notes" rows="5" cols="40"></textarea>
 		</div>
-		{% endblock %}
-	</body>
+		<br>
+		<div class="btn-group">
+			<button type="button">Lisää uusi työtehtävä</button>
+			<button type="submit">Aloita tallennus</button>
+		</div>
+	</form>
+	<div display: inline-block;>
+		<div><form action="/pause-recording" method="POST">
+			<button type="submit">Keskeytä tallennus</button>
+			<input type="hidden" name="id" value={{ id }}>
+		</form></div>
+		<div><form action="/continue-recording" method="POST">
+			<button type="submit">Jatka tallennusta</button>
+			<input type="hidden" name="id" value={{ id }}>
+		</form></div>
+		<div><form action="/stop-recording" method="POST">
+			<button type="submit">Lopeta tallennus</button>
+			<input type="hidden" name="id" value={{ id }}>
+		</form></div>
+	</div>
+	{% endblock %}
+</body>
 </html>

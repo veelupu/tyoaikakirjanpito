@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		{% extends "layout.html" %}
-		{% block title %}Etusivu{% endblock %}
-	</head>
-	<body>
-		{% block content %}
-		<h2>Tervetuloa, {{ session.username }}!</h2>
-		<p>Olet työskennellyt</p>
-		<ul>
-			<li>tänään {{ hours[0] }} tuntia</li>
-			<li>tällä viikolla {{ hours[1] }} tuntia</li>
-			<li>tässä kuussa {{ hours[2] }} tuntia</li>
-			<li>tänä vuonna {{ hours[3] }} tuntia</li>
-		</ul>
-		{% endblock %}
-	</body>
+<head>
+	<meta charset="UTF-8">
+	{% extends "layout.html" %}
+	{% block title %}Etusivu{% endblock %}
+</head>
+<body>
+	{% block content %}
+	<h2>Tervetuloa, {{ session.username }}!</h2>
+	<p>Olet työskennellyt</p>
+	<ul>
+		<li>tänään {{ hours[0] }} tuntia</li>
+		<li>tällä viikolla {{ hours[1] }} tuntia</li>
+		<li>tässä kuussa {{ hours[2] }} tuntia</li>
+		<li>tänä vuonna {{ hours[3] }} tuntia</li>
+	</ul>
+	{% endblock %}
+</body>
 </html>
