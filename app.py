@@ -175,7 +175,17 @@ def browse():
     
 @app.route("/settings")
 def manage_settings():
-    return render_template("settings.html", id=id)
+    # Haetaan tehtävät tietokannasta
+    id = session["id"]
+    
+    sql = "SELECT content FROM task, users_task WHERE users_task.u_id=(:id) AND users_task.t_id=task.id"
+    result = db.session.execute(sql, {"id":id})
+    tasks = result.fetchall()
+    tasks = [x[0] for x in tasks]
+    
+    db.session.commit()
+    
+    return render_template("settings.html", id=id, tasks=tasks)
     
 @app.route("/change-password", methods=["POST"])
 def change_password():

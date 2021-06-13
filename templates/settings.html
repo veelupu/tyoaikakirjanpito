@@ -25,7 +25,12 @@
 		</form>
 		<p>{{ message }}</p>
 	</div>
-	<h2>Työtehtävät</h2>
+	<h2>Tallennetut työtehtävät</h2>
+	<ul>
+		{% for task in tasks %}
+		<li>{{ task }} {% endfor %}
+		</li>
+	</ul>
 	{% endblock %}
 </body>
 </html>
