@@ -73,24 +73,40 @@ def start_recording():
         db.session.execute(sql, {"e_id":e_id, "tasks":tasks})
         
         db.session.commit()
-        return render_template("record.html", tasks=tasks, timebeg=timebeg, id=e_id)
+        status = "käynnistetty"
+        return render_template("record.html", tasks=tasks, timebeg=timebeg, id=e_id, status=status)
         
 @app.route("/stop-recording", methods=["POST"])
 def stop_recording():
     # ***PUUTTUU*** tietokantaan tallentaminen
+    timebeg = "21:43"
+    timeend = "00:07"
     session["running"] = False
-    return render_template("record.html")
+    status = "lopetettu"
+    return render_template("record.html", timebeg=timebeg, timeend=timeend, status=status)
     
 @app.route("/pause-recording", methods=["POST"])
 def pause_recording():
     # Haetaan käynnissä olevan tallennuksen id
     id = int(request.form["id"])
     
+    # Haetaan käynnissä olevan tallennuksen alkamisaika tietokannasta
+    sql = "SELECT time_beg FROM entry WHERE id=(:id)"
+    result = db.session.execute(sql, {"id":id})
+    timebeg = result.fetchone()[0]
+    
+    # Haetaan käynnissä olevan tallennuksen tehtävät tietokannasta
+    sql = "SELECT content FROM task, task_entry WHERE task.id=task_entry.t_id AND e_id=(:id)"
+    result = db.session.execute(sql, {"id":id})
+    tasks = result.fetchall()
+    
     sql = "UPDATE entry SET paused=true WHERE id=(:id)"
     db.session.execute(sql, {"id":id})
+    
     db.session.commit()
-    session["running"] = False
-    return render_template("record.html")
+    # session["running"] = False
+    status = "keskeytetty"
+    return render_template("record.html", tasks=tasks, timebeg=timebeg, id=id, status=status)
     
 @app.route("/browse")
 def browse():

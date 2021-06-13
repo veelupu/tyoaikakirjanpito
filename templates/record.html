@@ -8,7 +8,9 @@
 	<body>
 		{% block content %}
 		{% if session.running %}
-		<p>Tallennus käynnissä! Tallennus alkoi {{ timebeg }} ja sen id on {{ id }}. Meneillään olevat työtehtävät: {{ tasks }}.</p>
+		<p>Tallennus {{ status }}! Tallennus alkoi {{ timebeg }} ja sen id on {{ id }}. Meneillään olevat työtehtävät: {{ tasks }}.</p>
+		{% else %}
+		<p>Tallennus lopetettu. Teit töitä {{ tasks }} kello {{ timebeg }}–{{ timeend }}</p>
 		{% endif %}
 		<form action="/start-recording" method="POST">
 			Valitse työtehtävät:
