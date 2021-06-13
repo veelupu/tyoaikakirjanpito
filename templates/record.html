@@ -29,15 +29,19 @@
 				<button type="submit">Aloita tallennus</button>
 			</div>
 		</form>
-		<div>
-			<form action="/pause-recording" method="POST">
+		<div display: inline-block;>
+			<div><form action="/pause-recording" method="POST">
 				<button type="submit">Keskeytä tallennus</button>
 				<input type="hidden" name="id" value={{ id }}>
-			</form>
-			<form action="/stop-recording" method="POST">
+			</form></div>
+			<div><form action="/continue-recording" method="POST">
+				<button type="submit">Jatka tallennusta</button>
+				<input type="hidden" name="id" value={{ id }}>
+			</form></div>
+			<div><form action="/stop-recording" method="POST">
 				<button type="submit">Lopeta tallennus</button>
 				<input type="hidden" name="id" value={{ id }}>
-			</form>
+			</form></div>
 		</div>
 		{% endblock %}
 	</body>

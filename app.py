@@ -121,9 +121,27 @@ def pause_recording():
     db.session.execute(sql, {"id":id})
     
     db.session.commit()
-    # session["running"] = False
     status = "keskeytetty"
     return render_template("record.html", tasks=tasks, timebeg=timebeg, id=id, status=status)
+    
+@app.route("/continue-recording", methods=["POST"])
+def continue_recording():
+    # Haetaan käynnissä olevan tallennuksen id
+    id = int(request.form["id"])
+    
+    # Merkitään tiedokantaan tallennus jatkuneeksi
+    sql = "UPDATE entry SET paused=false WHERE id=(:id)"
+    db.session.execute(sql, {"id":id})
+    
+    # Haetaan käynnissä olevan tallennuksen tehtävät tietokannasta
+    sql = "SELECT content FROM task, task_entry WHERE task.id=task_entry.t_id AND e_id=(:id)"
+    result = db.session.execute(sql, {"id":id})
+    tasks = result.fetchall()
+    
+    db.session.commit()
+    
+    status = "jatkuu"
+    return render_template("record.html", tasks=tasks, id=id, status=status)
     
 @app.route("/browse")
 def browse():
