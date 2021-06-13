@@ -4,7 +4,7 @@ from flask import Flask
 from flask import redirect, render_template, request, session
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy
-import sys
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
@@ -19,23 +19,21 @@ def index():
 
 @app.route("/login", methods=["POST"])
 def login():
+    options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
     username = request.form["username"]
     password = request.form["password"]
     sql = "SELECT password FROM users WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
     user = result.fetchone()
     if user == None:
-        options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
         return render_template("index.html", items=options, message=("Oijoi, jotain meni pieleen! Tarkista, että kirjoitit tunnuksesi oikein."))
     else:
-        if password == user[0]:
+        hash_value = user[0]
+        if check_password_hash(hash_value,password):
             session["username"] = username
             return redirect("/home")
         else:
-            options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
-            return render_template("index.html", items=options, message=("Oijoi! Tarkista, että kirjoitit salasanasi oikein."))          
-    # ***PUUTTUU**** TUNNUKSEN KRYPTAAMINEN
-    
+            return render_template("index.html", items=options, message=("Oijoi! Tarkista, että kirjoitit salasanasi oikein."))    
 
 @app.route("/logout")
 def logout():
@@ -46,6 +44,35 @@ def logout():
 def home():
     hours = [5, 34, 125, 876]
     return render_template("home.html", hours=hours)
+    
+@app.route("/register", methods=["POST"])
+def register():
+    # Hae tiedot lomakkeelta
+    options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
+    username = request.form["username"]
+    
+    sql = "SELECT EXISTS(SELECT 1 FROM users WHERE username=(:username))"
+    result = db.session.execute(sql, {"username":username})
+    
+    if result == False:
+        return render_template("index.html", items=options, message=("Voi harmi! Joku ehti jo varata tämän tunnuksen."))
+    
+    password1 = request.form["password1"]
+    password2 = request.form["password2"]
+    
+    if password1 != password2:
+        return render_template("index.html", items=options, message=("Hups! Salasanat eivät täsmää. Tarkista, että kirjoitit saman salasanan molempiin kenttiin."))
+    
+    # Kryptaa salasana
+    hash_value = generate_password_hash(password1)
+    
+    # Tallenna tietokantaan
+    sql = "INSERT INTO users (username, password) VALUES(:username, :password)"
+    db.session.execute(sql, {"username":username,"password":hash_value})
+    db.session.commit()
+    
+    # Avaa sisäänkirjautumissivu
+    return render_template("index.html", items=options, message=("Rekisteröityminen onnistui!"))
     
 @app.route("/start-recording", methods=["GET", "POST"])
 def start_recording():
@@ -79,16 +106,13 @@ def start_recording():
         
 @app.route("/stop-recording", methods=["POST"])
 def stop_recording():    
-    sys.stderr.write("mitähän tapahtuu 1\n")
     # Haetaan lopetettavan tallennuksen id
     id = int(request.form["id"])
     
-    sys.stderr.write("mitähän tapahtuu 2\n")
     # Lisätään tietokantaan tallennuksen päättymisaika
     sql = "UPDATE entry SET time_end=CURRENT_TIMESTAMP, paused=false WHERE id=(:id)"
     db.session.execute(sql, {"id":id})
     
-    sys.stderr.write("mitähän tapahtuu 3\n")
     # Haetaan lopetettavan tallennuksen alkamisaika ja loppumisaika tietokannasta
     sql = "SELECT time_beg, time_end FROM entry WHERE id=(:id)"
     result = db.session.execute(sql, {"id":id})
@@ -98,7 +122,6 @@ def stop_recording():
     time_end = times[0][1]
     
     db.session.commit()
-    sys.stderr.write("mitähän tapahtuu 4\n")
     session["running"] = False
     return render_template("record.html", timebeg=timebeg, time_end=time_end)
     
