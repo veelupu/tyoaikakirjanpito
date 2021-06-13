@@ -41,7 +41,7 @@ nav li:hover {
 	cursor: pointer;
 }
 
-#login {
+.floating {
     display: block;
     float: right;
 	background-color: #94AD76;
