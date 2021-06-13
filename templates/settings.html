@@ -7,7 +7,25 @@
 </head>
 <body>
 	{% block content %}
-	<p>Hallitse käyttäjätiliäsi täällä</p>
+	<h2>Käyttäjän tiedot</h2>
+	<p>Käyttäjätunnus: {{ session.username }}</p>
+	<div>
+		<h2>Vaihda salasana</h2>
+		<form action="/change-password" method="POST">
+			<p>Salasana:<br>
+				<input type="password" name="password-old">
+			</p>
+			<p>Uusi salasana:<br>
+				<input type="password" name="password-new1">
+			</p>
+			<p>Uusi salasana uudelleen:<br>
+				<input type="password" name="password-new2">
+			</p>
+			<input type="submit">
+		</form>
+		<p>{{ message }}</p>
+	</div>
+	<h2>Työtehtävät</h2>
 	{% endblock %}
 </body>
 </html>

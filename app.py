@@ -22,7 +22,7 @@ def login():
     options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
     username = request.form["username"]
     password = request.form["password"]
-    sql = "SELECT password FROM users WHERE username=:username"
+    sql = "SELECT password, id FROM users WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
     user = result.fetchone()
     
@@ -32,6 +32,7 @@ def login():
         hash_value = user[0]
         if check_password_hash(hash_value,password):
             session["username"] = username
+            session["id"] = user[1]
             return redirect("/home")
         else:
             return render_template("index.html", items=options, message=("Oijoi! Tarkista, että kirjoitit salasanasi oikein."))    
@@ -174,21 +175,36 @@ def browse():
     
 @app.route("/settings")
 def manage_settings():
-    return render_template("settings.html")
+    return render_template("settings.html", id=id)
     
-@app.route("/change-password")
+@app.route("/change-password", methods=["POST"])
 def change_password():
-    id = int(request.form["id"])
+    id = session["id"]
     
-    # Haetaan tieto salasanasta tietokannasta
+    sql = "SELECT password FROM users WHERE id=:id"
+    result = db.session.execute(sql, {"id":id})
+    user = result.fetchone()
+    db.session.commit()
     
+    hash_value = user[0]
     password_old = request.form["password-old"]
     
-    password_new1 = request.form["password-new1"]
-    password_new2 = request.form["password-new2"]
+    if check_password_hash(hash_value,password_old):
+        password_new1 = request.form["password-new1"]
+        password_new2 = request.form["password-new2"]
+        
+        if password_new1 == password_new2:
+            hash_value = generate_password_hash(password_new1)
+            sql = "UPDATE users SET password=(:hash_value) WHERE id=(:id)"
+            db.session.execute(sql, {"id":id, "hash_value":hash_value})
+            db.session.commit()
+            return render_template("settings.html", message="Salasanan vaihtaminen onnistui!")
+        else:
+            return render_template("settings.html", message="Salasanan vaihtaminen epäonnistui – salasanat eivät täsmää.")
+    else:
+        return render_template("settings.html", message="Salasanan vaihtaminen epäonnistui – tarkista salasanasi oikeinkirjoitus.")
 
-#def fecth_password(id):
-    
+
     
     
     
