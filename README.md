@@ -8,7 +8,15 @@ Käyttäjä voi tallentaa sovellukseen useita eri työpaikkoja ja työpaikkojen 
 
 Käyttäjä voi selata menneitä työajantallennuksia. Tallennuksia voi järjestää ja suodattaa esimerkiksi ajankohdan, työpaikan tai työtehtävän mukaan. Käyttäjä voi myös käyttää hakusanaa löytääkseen tietyn tallennuksen siihen lisättyjen muistiinpanojen perusteella.
 
-## Nykyinen tilanne
+## Tilanne 3. välipalautuksen aikaan
+
+Sovellukseen voi luoda itselleen käyttäjätunnuksen, kirjautua sisään ja ulos, vaihtaa salasanan, tarkastella tallennettuja työtehtäviä sekä tallentaa työaikaa tietyillä työtehtävillä ja muistiinpanoilla. Työaika tallentuu tietokantaan, mutta tallennuksen lopetettuaan käyttäjä ei vielä voi nähdä sitä.
+
+Sovellusta voi testata [Herokussa](https://tsoha-tyoaikakirjanpito.herokuapp.com). Kirjautumiseen käytetään tunnusta "kokeilija" ja salasanaa "kokeilen" tai luoda oman tunnuksen. Huomaa, että kokeilutunnuksen salasanaa ei ole mahdollista vaihtaa.
+
+Seuraavaksi sovelluksen koodia refaktoroidaan toiston poistamiseksi (Python-koodi) ja tuodaan työajantallennukset käyttäjän nähtäville.
+
+## Tilanne 2. välipalautuksen aikaan
 
 Sovelluksesta on toteutettu suurin osa rakenteesta: Sovellukseen pääsee kirjautumaan sisään, ja sovelluksessa voi navigoida Tallenna- ja Selaa-sivuille. Tallenna-sivulla voi valita työtehtävän ja aloittaa tallennuksen sekä pysäyttää tallennuksen. Sovellus ei vielä tallenna työaikakirjanpitoa tietokantaan, vaikka tietokanta tauluineen onkin jo luotu. Sovelluksesta voi myös kirjautua ulos.
 
