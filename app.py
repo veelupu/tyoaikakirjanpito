@@ -96,7 +96,7 @@ def start_recording():
         #haetaan aloitusaika, jotta se voidaan näyttää sivulla
         sql = "SELECT time_beg FROM entry WHERE id=(:id)"
         result = db.session.execute(sql, {"id":e_id})
-        timebeg = result.fetchone()[0]
+        timebeg = result.fetchone()[0].strftime("%H.%M")
         
         # käytä id:tä liitostaulun päivittämiseen
         tasks = request.form.getlist("task")
@@ -121,8 +121,8 @@ def stop_recording():
     result = db.session.execute(sql, {"id":id})
     times = result.fetchall()
     
-    timebeg = times[0][0]
-    time_end = times[0][1]
+    timebeg = times[0][0].strftime("%H.%M")
+    time_end = times[0][1].strftime("%H.%M")
     
     db.session.commit()
     session["running"] = False
@@ -136,7 +136,7 @@ def pause_recording():
     # Haetaan käynnissä olevan tallennuksen alkamisaika tietokannasta
     sql = "SELECT time_beg FROM entry WHERE id=(:id)"
     result = db.session.execute(sql, {"id":id})
-    timebeg = result.fetchone()[0]
+    timebeg = result.fetchone()[0].strftime("%H.%M")
     
     # Haetaan käynnissä olevan tallennuksen tehtävät tietokannasta
     sql = "SELECT content FROM task, task_entry WHERE task.id=task_entry.t_id AND e_id=(:id)"
@@ -155,6 +155,10 @@ def continue_recording():
     # Haetaan käynnissä olevan tallennuksen id
     id = int(request.form["id"])
     
+    sql = "SELECT time_beg FROM entry WHERE id=(:id)"
+    result = db.session.execute(sql, {"id":id})
+    timebeg = result.fetchone()[0].strftime("%H.%M")
+    
     # Merkitään tiedokantaan tallennus jatkuneeksi
     sql = "UPDATE entry SET paused=false WHERE id=(:id)"
     db.session.execute(sql, {"id":id})
@@ -167,7 +171,7 @@ def continue_recording():
     db.session.commit()
     
     status = "jatkuu"
-    return render_template("record.html", tasks=tasks, id=id, status=status)
+    return render_template("record.html", tasks=tasks, timebeg=timebeg, id=id, status=status)
     
 @app.route("/browse")
 def browse():
