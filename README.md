@@ -12,7 +12,7 @@ Käyttäjä voi selata menneitä työajantallennuksia. Tallennuksia voi järjest
 
 Sovellukseen voi luoda itselleen käyttäjätunnuksen, kirjautua sisään ja ulos, vaihtaa salasanan, tarkastella tallennettuja työtehtäviä sekä tallentaa työaikaa tietyillä työtehtävillä ja muistiinpanoilla. Työaika tallentuu tietokantaan, mutta tallennuksen lopetettuaan käyttäjä ei vielä voi nähdä sitä.
 
-Sovellusta voi testata [Herokussa](https://tsoha-tyoaikakirjanpito.herokuapp.com). Kirjautumiseen käytetään tunnusta "kokeilija" ja salasanaa "kokeilen" tai luoda oman tunnuksen. Huomaa, että kokeilutunnuksen salasanaa ei ole mahdollista vaihtaa.
+Sovellusta voi testata [Herokussa](https://tsoha-tyoaikakirjanpito.herokuapp.com). Kirjautumiseen voi käyttää tunnusta "kokeilija" ja salasanaa "kokeilen" tai luoda oman tunnuksen. Huomaa, että kokeilutunnuksen salasanaa ei ole mahdollista vaihtaa.
 
 Seuraavaksi sovelluksen koodia refaktoroidaan toiston poistamiseksi (Python-koodi) ja tuodaan työajantallennukset käyttäjän nähtäville.
 
