@@ -41,6 +41,15 @@ nav li:hover {
 	cursor: pointer;
 }
 
+#login {
+    display: block;
+    float: right;
+	background-color: #94AD76;
+	padding: 1em;
+	border-radius: 0.5em;
+	box-shadow: 2px 2px 20px -9px;
+}
+
 button {
 	height: 80px;
 	width: 80px;

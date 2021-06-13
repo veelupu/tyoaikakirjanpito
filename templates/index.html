@@ -18,6 +18,19 @@
 	<h2>
 		Tervetuloa pitämään kirjaa töistäsi!
 	</h2>
+	<div id="login">
+		<h3>Kirjaudu sisään</h3>
+		<form action="/login" method="POST">
+			<p>Käyttäjätunnus:<br>
+				<input type="text" name="username">
+			</p>
+			<p>Salasana:<br>
+				<input type="password" name="password">
+			</p>
+			<input type="submit" text="Kirjaudu" class="is-circle">
+		</form>
+		<p>{{ message }}</p>
+	</div>
 	<p>
 		Tällä sovelluksella voit
 	</p>
@@ -26,17 +39,7 @@
 		<li>{{ item }} {% endfor %}
 		</li>
 	</ul>
-	<h3>Kirjaudu sisään</h3>
-	<form action="/login" method="POST">
-		<p>Käyttäjätunnus:<br>
-			<input type="text" name="username">
-		</p>
-		<p>Salasana:<br>
-			<input type="password" name="password">
-		</p>
-		<input type="submit" text="Kirjaudu" class="is-circle">
-	</form>
-	<p>{{ message }}</p>
+	
 	<h3>Rekisteröidy käyttäjäksi</h3>
 	<form action="/register" method="POST">
 		<p>Käyttäjätunnus:<br>
