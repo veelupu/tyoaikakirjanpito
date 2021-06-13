@@ -4,6 +4,7 @@ from flask import Flask
 from flask import redirect, render_template, request, session
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy
+import sys
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
@@ -77,13 +78,29 @@ def start_recording():
         return render_template("record.html", tasks=tasks, timebeg=timebeg, id=e_id, status=status)
         
 @app.route("/stop-recording", methods=["POST"])
-def stop_recording():
-    # ***PUUTTUU*** tietokantaan tallentaminen
-    timebeg = "21:43"
-    timeend = "00:07"
+def stop_recording():    
+    sys.stderr.write("mitähän tapahtuu 1\n")
+    # Haetaan lopetettavan tallennuksen id
+    id = int(request.form["id"])
+    
+    sys.stderr.write("mitähän tapahtuu 2\n")
+    # Lisätään tietokantaan tallennuksen päättymisaika
+    sql = "UPDATE entry SET time_end=CURRENT_TIMESTAMP, paused=false WHERE id=(:id)"
+    db.session.execute(sql, {"id":id})
+    
+    sys.stderr.write("mitähän tapahtuu 3\n")
+    # Haetaan lopetettavan tallennuksen alkamisaika ja loppumisaika tietokannasta
+    sql = "SELECT time_beg, time_end FROM entry WHERE id=(:id)"
+    result = db.session.execute(sql, {"id":id})
+    times = result.fetchall()
+    
+    timebeg = times[0][0]
+    time_end = times[0][1]
+    
+    db.session.commit()
+    sys.stderr.write("mitähän tapahtuu 4\n")
     session["running"] = False
-    status = "lopetettu"
-    return render_template("record.html", timebeg=timebeg, timeend=timeend, status=status)
+    return render_template("record.html", timebeg=timebeg, time_end=time_end)
     
 @app.route("/pause-recording", methods=["POST"])
 def pause_recording():

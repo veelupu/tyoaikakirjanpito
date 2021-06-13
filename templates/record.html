@@ -10,7 +10,7 @@
 		{% if session.running %}
 		<p>Tallennus {{ status }}! Tallennus alkoi {{ timebeg }} ja sen id on {{ id }}. Meneillään olevat työtehtävät: {{ tasks }}.</p>
 		{% else %}
-		<p>Tallennus lopetettu. Teit töitä {{ tasks }} kello {{ timebeg }}–{{ timeend }}</p>
+		<p>Tallennus lopetettu. Teit töitä {{ tasks }} kello {{ timebeg }}–{{ time_end }}</p>
 		{% endif %}
 		<form action="/start-recording" method="POST">
 			Valitse työtehtävät:
@@ -36,6 +36,7 @@
 			</form>
 			<form action="/stop-recording" method="POST">
 				<button type="submit">Lopeta tallennus</button>
+				<input type="hidden" name="id" value={{ id }}>
 			</form>
 		</div>
 		{% endblock %}
