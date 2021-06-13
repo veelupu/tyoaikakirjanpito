@@ -170,3 +170,7 @@ def continue_recording():
 def browse():
     return render_template("browse.html")
     
+@app.route("/settings")
+def manage_settings():
+    return render_template("settings.html")
+    
