@@ -193,6 +193,9 @@ def manage_settings():
     
 @app.route("/change-password", methods=["POST"])
 def change_password():
+    if session["username"] == "kokeilija":
+        return render_template("settings.html", message="Tämän käyttäjän salasanaa ei ole mahdollista vaihtaa.")
+    
     id = session["id"]
     
     sql = "SELECT password FROM users WHERE id=:id"
