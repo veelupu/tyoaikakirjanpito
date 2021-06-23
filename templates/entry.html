@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	{% extends "layout.html" %}
+	{% block title %}Tallenna{% endblock %}
+</head>
+<body>
+	{% block content %}
+	<h2>Työtehtävät:</h2> {{ tasks }}
+	<h2>Työt aloitettu:</h2> {{ time_beg }}
+	<h2>Työt lopetettu:</h2> {{ time_end }}
+	<h2>Taukoja:</h2> {{ pause }}
+	<form action="/add-pause" method="POST">
+		<h2>Lisää tauko:</h2>
+		<p>
+			<input type="radio" name="pause" value="5"> 5 min.
+			<input type="radio" name="pause" value="10"> 10 min.
+			<input type="radio" name="pause" value="15"> 15 min.
+		</p>
+		<p>
+			<input type="radio" name="pause" value="20"> 20 min.
+			<input type="radio" name="pause" value="30"> 30 min.
+			<input type="radio" name="pause" value="45"> 45 min.
+		</p>
+		<p>
+			<input type="radio" name="pause" value="60"> 60 min.
+			<input type="radio" name="pause" value="90"> 90 min.
+			<input type="radio" name="pause" value="custom"> muu
+			<input type="number" name="custom">
+		</p>
+		<button type="submit">Lisää tauko</button>
+	</form>
+	{% endblock %}
+</body>
+</html>
