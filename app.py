@@ -1,10 +1,15 @@
 # Copyright (c) 2021 Veera Lupunen
 
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, jsonify
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
+import sys
+
+import logging
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
@@ -22,7 +27,7 @@ def login():
     options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
     username = request.form["username"]
     password = request.form["password"]
-    sql = "SELECT password, id FROM users WHERE username=:username"
+    sql = "SELECT password, id FROM worker WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
     user = result.fetchone()
     
@@ -53,7 +58,7 @@ def register():
     options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
     username = request.form["username"]
     
-    sql = "SELECT COUNT(id) FROM users WHERE username=(:username)"
+    sql = "SELECT COUNT(id) FROM worker WHERE username=(:username)"
     result = db.session.execute(sql, {"username":username})
     count = result.fetchone()[0]
     
@@ -70,13 +75,31 @@ def register():
     hash_value = generate_password_hash(password1)
     
     # Tallenna tietokantaan
-    sql = "INSERT INTO users (username, password) VALUES(:username, :password)"
+    sql = "INSERT INTO worker (username, password) VALUES(:username, :password)"
     db.session.execute(sql, {"username":username,"password":hash_value})
     db.session.commit()
     
     # Avaa sisäänkirjautumissivu
     return render_template("index.html", items=options, message=("Rekisteröityminen onnistui!"))
     
+@app.route("/add-entry", methods=["POST"])
+def add_entry():
+    sys.stderr.write("mikään ei toimi\n")
+    date = request.form["datepicker"]
+    sys.stderr.write("mikään ei toimi 2\n")
+    time_beg = request.form["time-beg"]
+    sys.stderr.write("mikään ei toimi 3\n")
+    time_end = request.form["time-end"]
+    sys.stderr.write("mikään ei toimi 4\n")
+    tasks = request.form.getlist("task")
+    sys.stderr.write("mikään ei toimi 5\n")
+    notes = request.form["notes"]
+    sys.stderr.write("mikään ei toimi 6\n")
+    
+    message = (f"tältä se näyttää: {date}, {time_beg}, {time_end}")
+    
+    return render_template("record.html", message=message)
+
 @app.route("/start-recording", methods=["GET", "POST"])
 def start_recording():
     if request.method == "GET":
@@ -87,13 +110,13 @@ def start_recording():
         # luo entry-tauluun tämä tallennus käyttämällä sql-aikaleimaa ja muistiinpanoja
         # ***PUUTTUU*** muistiinpanojenkirjoitusmahdollisuus
         notes = request.form["notes"]
-        sql = "INSERT INTO entry (time_beg, paused, notes) VALUES(CURRENT_TIMESTAMP, false, :notes) RETURNING id"
+        sql = "INSERT INTO entry (time_beg, notes) VALUES(CURRENT_TIMESTAMP, :notes) RETURNING id"
         
         # palauta juuri luodun tallennuksen id
         result = db.session.execute(sql, {"notes":notes})
         e_id = result.fetchone()[0]
         
-        #haetaan aloitusaika, jotta se voidaan näyttää sivulla
+        # haetaan aloitusaika, jotta se voidaan näyttää sivulla
         sql = "SELECT time_beg FROM entry WHERE id=(:id)"
         result = db.session.execute(sql, {"id":e_id})
         timebeg = result.fetchone()[0].strftime("%H.%M")
@@ -102,6 +125,8 @@ def start_recording():
         tasks = request.form.getlist("task")
         sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
         db.session.execute(sql, {"e_id":e_id, "tasks":tasks})
+        
+        # pyydetään lomakkeelta tauot
         
         db.session.commit()
         status = "käynnistetty"
@@ -113,7 +138,7 @@ def stop_recording():
     id = int(request.form["id"])
     
     # Lisätään tietokantaan tallennuksen päättymisaika
-    sql = "UPDATE entry SET time_end=CURRENT_TIMESTAMP, paused=false WHERE id=(:id)"
+    sql = "UPDATE entry SET time_end=CURRENT_TIMESTAMP WHERE id=(:id)"
     db.session.execute(sql, {"id":id})
     
     # Haetaan lopetettavan tallennuksen alkamisaika ja loppumisaika tietokannasta
@@ -128,6 +153,26 @@ def stop_recording():
     session["running"] = False
     return render_template("record.html", timebeg=timebeg, time_end=time_end)
     
+@app.route("/entry")
+def entry():
+    return render_template("entry.html")
+    
+@app.route("/add-pause", methods=["POST"])
+def add_pause():
+    id = session["id"]
+    
+    # pyydetään lomakkeelta valittu tauon pituus
+    pause = int(request.form["pause"])
+    
+    # tallennetaan tauko tietokantaan
+    sql = "UPDATE entry SET pause=pause+(:pause) WHERE id=(:id) RETURNING pause"
+    result = db.session.execute(sql, {"pause":pause, "id":id})
+    pause = result.fetchone()[0]
+    
+    db.session.commit()
+    
+    return render_template("entry.html", pause=pause)
+
 @app.route("/pause-recording", methods=["POST"])
 def pause_recording():
     # Haetaan käynnissä olevan tallennuksen id
@@ -172,17 +217,29 @@ def continue_recording():
     
     status = "jatkuu"
     return render_template("record.html", tasks=tasks, timebeg=timebeg, id=id, status=status)
-    
+
 @app.route("/browse")
 def browse():
     return render_template("browse.html")
+    
+@app.route("/browse/<timeframe>")
+def browse_timeframe(timeframe):
+    
+    sql = "SELECT e.*, e.time_end-e.time_beg work_time FROM entry e WHERE date_trunc('day', time_beg)=date_trunc('day', current_timestamp::timestamp)"
+    result = db.session.execute(sql)
+    db.session.commit()
+    
+    entries = result.fetchall()
+    entry_list = [{"id": x.id, "time_beg": x.time_beg, "time_end": x.time_end, "pause": x.pause, "work_time": x.work_time.seconds()/3600} for x in entries]
+    
+    return jsonify(entry_list)
     
 @app.route("/settings")
 def manage_settings():
     # Haetaan tehtävät tietokannasta
     id = session["id"]
     
-    sql = "SELECT content FROM task, users_task WHERE users_task.u_id=(:id) AND users_task.t_id=task.id"
+    sql = "SELECT content FROM task, worker_task WHERE worker_task.u_id=(:id) AND worker_task.t_id=task.id"
     result = db.session.execute(sql, {"id":id})
     tasks = result.fetchall()
     tasks = [x[0] for x in tasks]
@@ -198,7 +255,7 @@ def change_password():
     
     id = session["id"]
     
-    sql = "SELECT password FROM users WHERE id=:id"
+    sql = "SELECT password FROM worker WHERE id=:id"
     result = db.session.execute(sql, {"id":id})
     user = result.fetchone()
     db.session.commit()
@@ -212,7 +269,7 @@ def change_password():
         
         if password_new1 == password_new2:
             hash_value = generate_password_hash(password_new1)
-            sql = "UPDATE users SET password=(:hash_value) WHERE id=(:id)"
+            sql = "UPDATE worker SET password=(:hash_value) WHERE id=(:id)"
             db.session.execute(sql, {"id":id, "hash_value":hash_value})
             db.session.commit()
             return render_template("settings.html", message="Salasanan vaihtaminen onnistui!")
