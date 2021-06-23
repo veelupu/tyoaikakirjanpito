@@ -6,24 +6,34 @@
 		Työaikakirjanpito - {% block title %}{% endblock %}
 	</title>
 	<link rel="stylesheet" type="text/css" href="static/style.css">
-</head>
-<body>
-	<div class="header">
-		<div class="header-image"></div>
-		<h1>
-			Työaikakirjanpito
-		</h1>
-		<div class="header-image"></div>
-	</div>
-	<nav>
-		<ul>
-			<li><a href="/home">Etusivu</a></li>
-			<li><a href="/start-recording">Tallenna</a></li>
-			<li><a href="/browse">Selaa</a></li>
-			<li><a href="/settings">Hallitse</a></li>
-			<li><a href="/logout">Kirjaudu ulos</a></li>
-		</ul>
-	</nav>
-	{% block content %}{% endblock %}
-</body>
-</html>
+	<script   src="https://code.jquery.com/jquery-3.6.0.min.js"   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="   crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="/resources/demos/style.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script>
+		$( function() {
+			$( "#datepicker" ).datepicker({ dateFormat: 'dd/mm/yy' });
+		} );
+		</script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="header-image"></div>
+			<h1>
+				Työaikakirjanpito
+			</h1>
+			<div class="header-image"></div>
+		</div>
+		<nav>
+			<ul>
+				<li><a href="/home">Etusivu</a></li>
+				<li><a href="/start-recording">Tallenna</a></li>
+				<li><a href="/browse">Selaa</a></li>
+				<li><a href="/settings">Hallitse</a></li>
+				<li><a href="/logout">Kirjaudu ulos</a></li>
+			</ul>
+		</nav>
+		{% block content %}{% endblock %}
+	</body>
+	</html>
