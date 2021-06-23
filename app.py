@@ -84,17 +84,11 @@ def register():
     
 @app.route("/add-entry", methods=["POST"])
 def add_entry():
-    sys.stderr.write("mikään ei toimi\n")
     date = request.form["datepicker"]
-    sys.stderr.write("mikään ei toimi 2\n")
     time_beg = request.form["time-beg"]
-    sys.stderr.write("mikään ei toimi 3\n")
     time_end = request.form["time-end"]
-    sys.stderr.write("mikään ei toimi 4\n")
     tasks = request.form.getlist("task")
-    sys.stderr.write("mikään ei toimi 5\n")
     notes = request.form["notes"]
-    sys.stderr.write("mikään ei toimi 6\n")
     
     message = (f"tältä se näyttää: {date}, {time_beg}, {time_end}")
     
