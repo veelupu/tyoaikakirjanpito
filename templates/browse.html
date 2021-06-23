@@ -1,52 +1,81 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8" name="viewport">
-		{% extends "layout.html" %}
-		{% block title %}Selaa{% endblock %}
-
-	</head>
-	<body>
-		{% block content %}
-		<div class="tab">
-		  <button class="tablinks" onclick="openView(event, 'Day')">Päivä</button>
-		  <button class="tablinks" onclick="openView(event, 'Week')">Viikko</button>
-		  <button class="tablinks" onclick="openView(event, 'Month')">Kuukausi</button>
-  		  <button class="tablinks" onclick="openView(event, 'Year')">Vuosi</button>
-  		</div>
-		<div id="Day" class="tabcontent">
-		  <h3>Päivä</h3>
-		  <p>Tänään olet tehnyt seuraavia asioita:</p>
+<head>
+	<meta charset="UTF-8" name="viewport">
+	{% extends "layout.html" %}
+	{% block title %}Selaa{% endblock %}
+</head>
+<body>
+	{% block content %}
+	<div class="tab">
+		<button class="tablinks" onclick="openView(event, 'day')">Päivä</button>
+		<button class="tablinks" onclick="openView(event, 'week')">Viikko</button>
+		<button class="tablinks" onclick="openView(event, 'month')">Kuukausi</button>
+		<button class="tablinks" onclick="openView(event, 'year')">Vuosi</button>
+	</div>
+	<div id="day" class="tabcontent">
+		<h3>Päivä</h3>
+		<p>Tänään olet tehnyt seuraavia asioita:</p>
+		<div id="entries-day">
 		</div>
-		<div id="Week" class="tabcontent">
-		  <h3>Viikko</h3>
-		  <p>Tällä viikolla olet tehnyt seuraavia asioita:</p>
-		</div>
-		<div id="Month" class="tabcontent">
-		  <h3>Kuukausi</h3>
-		  <p>Tässä kuussa olet tehnyt seuraavia asioita:</p>
-		</div>
-		<div id="Year" class="tabcontent">
-		  <h3>Vuosi</h3>
-		  <p>Tänä vuonna olet tehnyt seuraavia asioita:</p>
-		</div>
+	</div>
+	<div id="week" class="tabcontent">
+		<h3>Viikko</h3>
+		<p>Tällä viikolla olet tehnyt seuraavia asioita:</p>
+	</div>
+	<div id="month" class="tabcontent">
+		<h3>Kuukausi</h3>
+		<p>Tässä kuussa olet tehnyt seuraavia asioita:</p>
+	</div>
+	<div id="year" class="tabcontent">
+		<h3>Vuosi</h3>
+		<p>Tänä vuonna olet tehnyt seuraavia asioita:</p>
+	</div>
 		
-		<!--https://www.w3schools.com/howto/howto_js_tabs.asp-->
-		<script>
+	<!--https://www.w3schools.com/howto/howto_js_tabs.asp-->
+	<script>
 		function openView(event, timeframe) {
-		  var i, tabcontent, tablinks;
-		  tabcontent = document.getElementsByClassName("tabcontent");
-		  for (i = 0; i < tabcontent.length; i++) {
-		    tabcontent[i].style.display = "none";
-		  }
-		  tablinks = document.getElementsByClassName("tablinks");
-		  for (i = 0; i < tablinks.length; i++) {
-		    tablinks[i].className = tablinks[i].className.replace(" active", "");
-		  }
-		  document.getElementById(timeframe).style.display = "block";
-		  event.currentTarget.className += " active";
+			var i, tabcontent, tablinks;
+			tabcontent = document.getElementsByClassName("tabcontent");
+			for (i = 0; i < tabcontent.length; i++) {
+				tabcontent[i].style.display = "none";
+			}
+			tablinks = document.getElementsByClassName("tablinks");
+			for (i = 0; i < tablinks.length; i++) {
+				tablinks[i].className = tablinks[i].className.replace(" active", "");
+			}
+			document.getElementById(timeframe).style.display = "block";
+			event.currentTarget.className += " active";
+			$.ajax({
+				url: "/browse/"+timeframe,
+				error: function(jqXHR, textStatus, errorThrown) {
+					window.alert("ei toimi ☹️ " + textStatus + " " + errorThrown);
+				},
+				success: function(data, textStatus, jqXHR) {
+					const entries = $('#entries-day');
+					entries.empty();
+					
+					$.each(data, function( index, value ) {
+						const date = $('<h4></h4>');
+						const entryBody = $('<div></div>');
+						const time = $('<p></p>');
+						const hours = $('<p></p>');
+						const tasks = $('<ul></ul>');
+						
+						time.text('Työskentelykellonaika: ' + value.time_beg + '–' + value.time_end);
+						hours.text('Työskentelyaika: ' + value.work_time + ' tuntia työtä, ' + value.pause + ' tuntia taukoa');
+						
+						$.each(value.tasks, function( index, value ) {
+							const li = $('<li></li>');
+							tasks.append(li);
+						});
+						entryBody.append(time, hours, tasks);
+						entries.append(date, entryBody);
+					});
+				}
+			});
 		}
 		</script>
 		{% endblock %}
 	</body>
-</html>
+	</html>
