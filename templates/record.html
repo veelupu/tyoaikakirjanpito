@@ -7,42 +7,25 @@
 </head>
 <body>
 	{% block content %}
-	{% if session.running %}
-	<p>Tallennus {{ status }}! Tallennus alkoi {{ timebeg }} ja sen id on {{ id }}. Meneillään olevat työtehtävät: {{ tasks }}.</p>
-	{% else %}
-	<p>Tallennus lopetettu. Teit töitä {{ tasks }} kello {{ timebeg }}–{{ time_end }}</p>
-	{% endif %}
-	<form action="/start-recording" method="POST">
+	Viesti Pythonilta: {{ message }}
+	<form action="/add-entry" method="POST">
+		<p>Päivämäärä: <input type="text" name="datepicker" id="datepicker"></p>
+		<p>Aloituskellonaika: <input type="time" name="time-beg"></p>
+		<p>Lopetuskellonaika: <input type="time" name="time-end"></p>
 		Valitse työtehtävät:
 		<p>
 			<input type="checkbox" name="task" value="sähköposti"> sähköposti
 			<input type="checkbox" name="task" value="pöytäkirja"> pöytäkirja
 			<input type="checkbox" name="task" value="kokous"> kokous
+			<button type="button">Lisää uusi työtehtävä</button>
 		</p>
 		Muistiinpanot:
 		<div>
 			<textarea name="notes" rows="5" cols="40"></textarea>
 		</div>
-		<br>
-		<div class="btn-group">
-			<button type="button">Lisää uusi työtehtävä</button>
-			<button type="submit">Aloita tallennus</button>
-		</div>
+		<button type="submit">Tallenna</button>
 	</form>
-	<div display: inline-block;>
-		<div><form action="/pause-recording" method="POST">
-			<button type="submit">Keskeytä tallennus</button>
-			<input type="hidden" name="id" value={{ id }}>
-		</form></div>
-		<div><form action="/continue-recording" method="POST">
-			<button type="submit">Jatka tallennusta</button>
-			<input type="hidden" name="id" value={{ id }}>
-		</form></div>
-		<div><form action="/stop-recording" method="POST">
-			<button type="submit">Lopeta tallennus</button>
-			<input type="hidden" name="id" value={{ id }}>
-		</form></div>
-	</div>
+	
 	{% endblock %}
 </body>
 </html>
