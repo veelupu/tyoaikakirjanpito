@@ -7,7 +7,11 @@
 </head>
 <body>
 	{% block content %}
-	Viesti Pythonilta: {{ message }}
+	{% if message %}
+	<div class="error-message">
+		{{ message }}
+	</div>
+	{% endif %}
 	<form action="/add-entry" method="POST">
 		<p>Päivämäärä: <input type="text" name="datepicker" id="datepicker"></p>
 		<p>Aloituskellonaika: <input type="time" name="time-beg"></p>
