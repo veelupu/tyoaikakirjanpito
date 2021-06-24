@@ -87,3 +87,9 @@ button:hover {
 	border: 1px solid #ccc;
 	border-top: none;
 }
+
+.error-message {
+	background-color: #FFF096;
+	padding: 1em;
+}
+
