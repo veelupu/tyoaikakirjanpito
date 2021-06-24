@@ -6,6 +6,7 @@ from os import getenv
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 import sys
+import datetime
 
 import logging
 logging.basicConfig()
@@ -91,6 +92,36 @@ def add_entry():
     notes = request.form["notes"]
     
     message = (f"tältä se näyttää: {date}, {time_beg}, {time_end}")
+    
+    day = int(date[:2])
+    month = int(date[3:5])
+    year = int(date[6:])
+    
+    timeformat = "%H:%M"
+    
+    try:
+        time_beg = datetime.datetime.strptime(time_beg, timeformat).time()
+    except ValueError:
+        return render_template("record.html", message="Tarkista aloituskellonaika! Anna aika muodossa hh:mm")
+    
+    try:
+        time_end = datetime.datetime.strptime(time_end, timeformat).time()
+    except ValueError:
+        return render_template("record.html", message="Tarkista lopetuskellonaika! Anna aika muodossa hh:mm")
+    
+    sys.stderr.write(f"vuosi: {year}, kuukausi: {month}, päivä: {day}\n")
+    
+    time_beg = datetime.datetime.combine(datetime.date(year, month, day), time_beg)
+    time_end = datetime.datetime.combine(datetime.date(year, month, day), time_end)
+    
+    if time_beg > time_end:
+        return render_template("record.html", message="Tarkista kellonajat! Aloituskellonajan pitää olla lopetuskellonaikaa aikaisempi.")
+    
+    sql = "INSERT INTO entry (time_beg, time_end, notes) VALUES(:time_beg, :time_end, :notes)"
+    db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes})
+    db.session.commit()
+    
+    # Lisää työtehtävien tallennus tietokantaan
     
     return render_template("record.html", message=message)
 
