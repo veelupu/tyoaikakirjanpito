@@ -135,19 +135,21 @@ def browse():
     
 @app.route("/browse/<timeframe>")
 def browse_timeframe(timeframe):
-    
+        
     sql = """SELECT e.*, e.time_end-e.time_beg work_time, array_agg(t.content) tasks
         FROM entry e 
         JOIN task_entry t_e ON e.id=t_e.e_id 
         JOIN task t ON t_e.t_id=t.id
-        WHERE date_trunc('day', time_beg)=date_trunc('day', current_timestamp::timestamp)
+        WHERE date_trunc(:timeframe, time_beg)=date_trunc(:timeframe, current_timestamp::timestamp)
         GROUP BY e.id"""
-    result = db.session.execute(sql)
+    
+    result = db.session.execute(sql, {"timeframe":timeframe})
     db.session.commit()
     
     entries = result.fetchall()
     entry_list = [{
         "id": x.id,
+        "date": x.time_beg.strftime("%d.%m.%Y"),
         "time_beg": x.time_beg.strftime("%H:%M"),
         "time_end": x.time_end.strftime("%H:%M"),
         "pause": str(x.pause).replace(".", ","),

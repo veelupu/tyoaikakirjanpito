@@ -52,20 +52,20 @@
 					window.alert("ei toimi ☹️ " + textStatus + " " + errorThrown);
 				},
 				success: function(data, textStatus, jqXHR) {
-					const entries = $('#entries-day');
+					const entries = $('#' + timeframe);
 					entries.empty();
 					
 					$.each(data, function( index, value ) {
-						const date = $('<h4></h4>');
 						const entryBody = $('<div class="entry-body"></div>');
+						const space = $('<br>');
 						const time = $('<p></p>');
 						const hours = $('<p></p>');
-						const subtitleTasks = $('<h5>Työtehtävät:</h5>');
+						const subtitleTasks = $('<h4>Työtehtävät:</h4>');
 						const tasks = $('<ul></ul>');
-						const subtitleNotes = $('<h5>Muistiinpanot:</h5>');
+						const subtitleNotes = $('<h4>Muistiinpanot:</h4>');
 						const notes = $('<p></p>');
 						
-						time.text('Työskentelykellonaika: ' + value.time_beg + '–' + value.time_end);
+						time.text(value.date + ' ' + value.time_beg + '–' + value.time_end);
 						hours.text('Työskentelyaika: ' + value.work_time + ' tuntia työtä, ' + value.pause + ' tuntia taukoa');
 						notes.text(value.notes);
 						
@@ -75,7 +75,7 @@
 							tasks.append(li);
 						});
 						entryBody.append(time, hours, subtitleTasks, tasks, subtitleNotes, notes);
-						entries.append(date, entryBody);
+						entries.append(entryBody, space);
 					});
 				}
 			});
