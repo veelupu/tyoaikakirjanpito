@@ -141,7 +141,13 @@ def browse_timeframe(timeframe):
     db.session.commit()
     
     entries = result.fetchall()
-    entry_list = [{"id": x.id, "time_beg": x.time_beg, "time_end": x.time_end, "pause": x.pause, "work_time": x.work_time.seconds()/3600} for x in entries]
+    entry_list = [{
+        "id": x.id,
+        "time_beg": x.time_beg.strftime("%H:%M"),
+        "time_end": x.time_end.strftime("%H:%M"),
+        "pause": str(x.pause)replace(".", ","),
+        "work_time": str(x.work_time.total_seconds()/3600).replace(".", ",")}
+        for x in entries]
     
     return jsonify(entry_list)
     
