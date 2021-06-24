@@ -12,7 +12,7 @@
 		{{ message }}
 	</div>
 	{% endif %}
-	<form action="/add-entry" method="POST">
+	<form action="/add-entry" method="POST" class="entry-form">
 		<p>Päivämäärä: <input type="text" name="datepicker" id="datepicker"></p>
 		<p>Aloituskellonaika: <input type="time" name="time-beg"></p>
 		<p>Lopetuskellonaika: <input type="time" name="time-end"></p>
@@ -27,6 +27,7 @@
 		<div>
 			<textarea name="notes" rows="5" cols="40"></textarea>
 		</div>
+		<br>
 		<button type="submit">Tallenna</button>
 	</form>
 	
