@@ -91,8 +91,6 @@ def add_entry():
     tasks = request.form.getlist("task")
     notes = request.form["notes"]
     
-    message = (f"tältä se näyttää: {date}, {time_beg}, {time_end}")
-    
     day = int(date[:2])
     month = int(date[3:5])
     year = int(date[6:])
@@ -117,13 +115,16 @@ def add_entry():
     if time_beg > time_end:
         return render_template("record.html", message="Tarkista kellonajat! Aloituskellonajan pitää olla lopetuskellonaikaa aikaisempi.")
     
-    sql = "INSERT INTO entry (time_beg, time_end, notes) VALUES(:time_beg, :time_end, :notes)"
-    db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes})
+    sql = "INSERT INTO entry (time_beg, time_end, notes) VALUES(:time_beg, :time_end, :notes) RETURNING id"
+    result = db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes})
+    e_id = result.fetchone()[0]
+    
+    sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
+    db.session.execute(sql, {"e_id":e_id, "tasks":tasks})
+    
     db.session.commit()
     
-    # Lisää työtehtävien tallennus tietokantaan
-    
-    return render_template("record.html", message=message)
+    return render_template("record.html", message="Tallennus onnistui!")
 
 @app.route("/start-recording", methods=["GET", "POST"])
 def start_recording():
