@@ -57,19 +57,24 @@
 					
 					$.each(data, function( index, value ) {
 						const date = $('<h4></h4>');
-						const entryBody = $('<div></div>');
+						const entryBody = $('<div class="entry-body"></div>');
 						const time = $('<p></p>');
 						const hours = $('<p></p>');
+						const subtitleTasks = $('<h5>Työtehtävät:</h5>');
 						const tasks = $('<ul></ul>');
+						const subtitleNotes = $('<h5>Muistiinpanot:</h5>');
+						const notes = $('<p></p>');
 						
 						time.text('Työskentelykellonaika: ' + value.time_beg + '–' + value.time_end);
 						hours.text('Työskentelyaika: ' + value.work_time + ' tuntia työtä, ' + value.pause + ' tuntia taukoa');
+						notes.text(value.notes);
 						
 						$.each(value.tasks, function( index, value ) {
 							const li = $('<li></li>');
+							li.text(value);
 							tasks.append(li);
 						});
-						entryBody.append(time, hours, tasks);
+						entryBody.append(time, hours, subtitleTasks, tasks, subtitleNotes, notes);
 						entries.append(date, entryBody);
 					});
 				}

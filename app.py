@@ -136,7 +136,12 @@ def browse():
 @app.route("/browse/<timeframe>")
 def browse_timeframe(timeframe):
     
-    sql = "SELECT e.*, e.time_end-e.time_beg work_time FROM entry e WHERE date_trunc('day', time_beg)=date_trunc('day', current_timestamp::timestamp)"
+    sql = """SELECT e.*, e.time_end-e.time_beg work_time, array_agg(t.content) tasks
+        FROM entry e 
+        JOIN task_entry t_e ON e.id=t_e.e_id 
+        JOIN task t ON t_e.t_id=t.id
+        WHERE date_trunc('day', time_beg)=date_trunc('day', current_timestamp::timestamp)
+        GROUP BY e.id"""
     result = db.session.execute(sql)
     db.session.commit()
     
@@ -145,8 +150,10 @@ def browse_timeframe(timeframe):
         "id": x.id,
         "time_beg": x.time_beg.strftime("%H:%M"),
         "time_end": x.time_end.strftime("%H:%M"),
-        "pause": str(x.pause)replace(".", ","),
-        "work_time": str(x.work_time.total_seconds()/3600).replace(".", ",")}
+        "pause": str(x.pause).replace(".", ","),
+        "work_time": ("%.02f" % (x.work_time.total_seconds()/3600)).replace(".", ","),
+        "tasks": x.tasks,
+        "notes": x.notes}
         for x in entries]
     
     return jsonify(entry_list)
