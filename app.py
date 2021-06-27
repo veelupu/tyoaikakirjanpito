@@ -7,8 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 import sys
 import datetime
-
 import logging
+import secrets
+
 logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
@@ -39,6 +40,7 @@ def login():
         if check_password_hash(hash_value,password):
             session["username"] = username
             session["id"] = user[1]
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/home")
         else:
             return render_template("index.html", items=options, message=("Oijoi! Tarkista, että kirjoitit salasanasi oikein."))    
@@ -135,6 +137,9 @@ def add_entry():
     if request.method == "GET":
         return render_template("record.html", tasks=all_tasks)
         
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    
     date = request.form["datepicker"]
     time_beg = request.form["time-beg"]
     time_end = request.form["time-end"]
@@ -188,8 +193,8 @@ def browse_timeframe(timeframe):
         
     sql = """SELECT e.*, e.time_end-e.time_beg work_time, array_agg(t.content) tasks
         FROM entry e 
-        JOIN task_entry t_e ON e.id=t_e.e_id 
-        JOIN task t ON t_e.t_id=t.id
+        LEFT JOIN task_entry t_e ON e.id=t_e.e_id 
+        LEFT JOIN task t ON t_e.t_id=t.id
         WHERE date_trunc(:timeframe, time_beg)=date_trunc(:timeframe, current_timestamp::timestamp)
         AND w_id=(:w_id)
         GROUP BY e.id"""
@@ -205,7 +210,7 @@ def browse_timeframe(timeframe):
         "time_end": x.time_end.strftime("%H:%M"),
         "pause": str(x.pause).replace(".", ","),
         "work_time": ("%.02f" % (x.work_time.total_seconds()/3600 - x.pause)).replace(".", ","),
-        "tasks": x.tasks,
+        "tasks": [] if x.tasks == [None] else x.tasks,
         "notes": x.notes}
         for x in entries]
     
@@ -229,6 +234,9 @@ def manage_settings():
 def change_password():
     if session["username"] == "kokeilija":
         return render_template("settings.html", message="Tämän käyttäjän salasanaa ei ole mahdollista vaihtaa.")
+    
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
     
     id = session["id"]
     
@@ -257,6 +265,9 @@ def change_password():
 
 @app.route("/add-task", methods=["POST"])
 def add_task():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    
     w_id = session["id"]
     content = request.form["new-task"]
     
