@@ -88,7 +88,7 @@ button:hover {
 	border-top: none;
 }
 
-.error-message {
+.message {
 	background-color: #FFF096;
 	padding: 1em;
 }
