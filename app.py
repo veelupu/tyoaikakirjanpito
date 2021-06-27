@@ -64,9 +64,21 @@ def home():
             GROUP BY e.id) AS work_times"""
             
         result = db.session.execute(sql, {"w_id":w_id, "timeframe":timeframe[i]})
+        work_time = result.fetchone()[0]
+        
+        sql = """SELECT SUM (pause) FROM (
+            SELECT pause 
+            FROM entry e 
+            WHERE w_id=(:w_id) 
+            AND date_trunc(:timeframe, time_beg)=date_trunc(:timeframe, current_timestamp::timestamp)
+            GROUP BY e.id) AS work_times"""
+        
+        result = db.session.execute(sql, {"w_id":w_id, "timeframe":timeframe[i]})
+        pause = result.fetchone()[0]
+        
         db.session.commit()
         
-        hours[i] = result.fetchone()[0]
+        hours[i] = ("%.02f" % (work_time.total_seconds()/3600 - pause)).replace(".", ",")
     
     return render_template("home.html", hours=hours)
     
@@ -120,6 +132,9 @@ def add_entry():
     tasks = request.form.getlist("task")
     pause = request.form["pause"]
     notes = request.form["notes"]
+    
+    if pause != None:
+        pause = int(pause)/60
 
     day = int(date[:2])
     month = int(date[3:5])
@@ -180,7 +195,7 @@ def browse_timeframe(timeframe):
         "time_beg": x.time_beg.strftime("%H:%M"),
         "time_end": x.time_end.strftime("%H:%M"),
         "pause": str(x.pause).replace(".", ","),
-        "work_time": ("%.02f" % (x.work_time.total_seconds()/3600)).replace(".", ","),
+        "work_time": ("%.02f" % (x.work_time.total_seconds()/3600 - x.pause)).replace(".", ","),
         "tasks": x.tasks,
         "notes": x.notes}
         for x in entries]
