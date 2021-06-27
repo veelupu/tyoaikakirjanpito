@@ -66,6 +66,9 @@ def home():
         result = db.session.execute(sql, {"w_id":w_id, "timeframe":timeframe[i]})
         work_time = result.fetchone()[0]
         
+        if work_time == None:
+            continue;
+        
         sql = """SELECT SUM (pause) FROM (
             SELECT pause 
             FROM entry e 
@@ -87,6 +90,9 @@ def register():
     # Hae tiedot lomakkeelta
     options = ["merkitä ylös työntuntisi", "pysyä kärryillä tehtyjen tuntien määrästä", "kannustaa itseäsi toisaalta töiden tekoon ja toisaalta ansaittuun lepoon."]
     username = request.form["username"]
+    
+    if len(username) > 25 or len(username) < 3:
+        return render_template("index.html", items=options, message=("Liian lyhyt tai pitkä käyttäjänimi! Nimen tulee olla vähintään 3 merkkiä ja enintään 25 merkkiä pitkä."))
     
     sql = "SELECT COUNT(id) FROM worker WHERE username=(:username)"
     result = db.session.execute(sql, {"username":username})
