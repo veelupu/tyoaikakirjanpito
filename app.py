@@ -147,6 +147,9 @@ def add_entry():
     pause = request.form["pause"]
     notes = request.form["notes"]
     
+    if pause == "custom":
+        pause = request.form["custom"]
+    
     if pause != None:
         pause = int(pause)/60
 
@@ -208,7 +211,7 @@ def browse_timeframe(timeframe):
         "date": x.time_beg.strftime("%d.%m.%Y"),
         "time_beg": x.time_beg.strftime("%H:%M"),
         "time_end": x.time_end.strftime("%H:%M"),
-        "pause": str(x.pause).replace(".", ","),
+        "pause": ("%.02f" % x.pause).replace(".", ","),
         "work_time": ("%.02f" % (x.work_time.total_seconds()/3600 - x.pause)).replace(".", ","),
         "tasks": [] if x.tasks == [None] else x.tasks,
         "notes": x.notes}
