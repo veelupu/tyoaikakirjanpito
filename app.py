@@ -118,11 +118,9 @@ def add_entry():
     time_beg = request.form["time-beg"]
     time_end = request.form["time-end"]
     tasks = request.form.getlist("task")
-    
-    sys.stderr.write(f"lista taskeja: {tasks}\n")
-    
+    pause = request.form["pause"]
     notes = request.form["notes"]
-    
+
     day = int(date[:2])
     month = int(date[3:5])
     year = int(date[6:])
@@ -139,16 +137,14 @@ def add_entry():
     except ValueError:
         return render_template("record.html", message="Tarkista lopetuskellonaika! Anna aika muodossa hh:mm")
     
-    sys.stderr.write(f"vuosi: {year}, kuukausi: {month}, päivä: {day}\n")
-    
     time_beg = datetime.datetime.combine(datetime.date(year, month, day), time_beg)
     time_end = datetime.datetime.combine(datetime.date(year, month, day), time_end)
     
     if time_beg > time_end:
         return render_template("record.html", message="Tarkista kellonajat! Aloituskellonajan pitää olla lopetuskellonaikaa aikaisempi.")
-    
-    sql = "INSERT INTO entry (time_beg, time_end, notes, w_id) VALUES(:time_beg, :time_end, :notes, :w_id) RETURNING id"
-    result = db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes, "w_id":w_id})
+       
+    sql = "INSERT INTO entry (time_beg, time_end, pause, notes, w_id) VALUES(:time_beg, :time_end, :pause, :notes, :w_id) RETURNING id"
+    result = db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "pause":pause, "notes":notes, "w_id":w_id})
     e_id = result.fetchone()[0]
     
     sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
