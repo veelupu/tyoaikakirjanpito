@@ -6,6 +6,8 @@ Suuri osa sovelluksen suunnitellusta keskeisestä toiminnallisuudesta tuli valmi
 
 Käyttäjä voi nyt luoda itselleen tunnuksen, kirjautua sisään sovellukseen ja tehdä työajantallennuksia. Käyttäjä voi lisätä itselleen erilaisia työtehtäviä, joita hän voi liittää omiin työajantallennuksiinsa sekä kertoa, kuinka paljon hän piti taukoja työskentelynsä aikana. Taukoja ei lasketa mukaan varsinaiseen työaikaan. Käyttäjä voi lisäksi selata tekemiään tallennuksia kuluneelta päivältä, viikolta, kuukaudelta ja vuodelta sekä vaihtaa salasanansa. Etusivulla käyttäjälle näytetään yhteenveto tämän tekemästä työstä.
 
+Sovellusta voi testata [Herokussa](https://tsoha-tyoaikakirjanpito.herokuapp.com). Kirjautumiseen voi käyttää tunnusta "kokeilija" ja salasanaa "kokeilen" tai luoda oman tunnuksen. Huomaa, että kokeilutunnuksen salasanaa ei ole mahdollista vaihtaa.
+
 ## Tilanne 3. välipalautuksen aikaan
 
 Sovellukseen voi luoda itselleen käyttäjätunnuksen, kirjautua sisään ja ulos, vaihtaa salasanan, tarkastella tallennettuja työtehtäviä sekä tallentaa työaikaa tietyillä työtehtävillä ja muistiinpanoilla. Työaika tallentuu tietokantaan, mutta tallennuksen lopetettuaan käyttäjä ei vielä voi nähdä sitä.
