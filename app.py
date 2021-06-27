@@ -216,7 +216,8 @@ def browse_timeframe(timeframe):
         LEFT JOIN task t ON t_e.t_id=t.id
         WHERE date_trunc(:timeframe, time_beg)=date_trunc(:timeframe, current_timestamp::timestamp)
         AND w_id=(:w_id)
-        GROUP BY e.id"""
+        GROUP BY e.id
+        ORDER BY e.time_beg DESC"""
     
     result = db.session.execute(sql, {"timeframe":timeframe, "w_id":w_id})
     db.session.commit()
