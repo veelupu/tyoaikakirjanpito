@@ -82,16 +82,28 @@ def register():
     
     # Avaa sisäänkirjautumissivu
     return render_template("index.html", items=options, message=("Rekisteröityminen onnistui!"))
-    
+
 @app.route("/add-entry", methods=["GET", "POST"])
 def add_entry():
+    id = session["id"]
+    
+    sql = "SELECT content FROM task, worker_task w_t WHERE w_t.w_id=(:id) AND w_t.t_id=task.id"
+    result = db.session.execute(sql, {"id":id})
+    all_tasks = result.fetchall()
+    all_tasks = [x[0] for x in all_tasks]
+    
+    db.session.commit()
+    
     if request.method == "GET":
-        return render_template("record.html")
+        return render_template("record.html", tasks=all_tasks)
         
     date = request.form["datepicker"]
     time_beg = request.form["time-beg"]
     time_end = request.form["time-end"]
     tasks = request.form.getlist("task")
+    
+    sys.stderr.write(f"lista taskeja: {tasks}\n")
+    
     notes = request.form["notes"]
     
     day = int(date[:2])
@@ -122,16 +134,12 @@ def add_entry():
     result = db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes})
     e_id = result.fetchone()[0]
     
-    #
-    ########## FIX ME! EI LIITOSTAULUA VAAN ENTRYYN KÄYTTÄJÄN ID
-    #
-    
     sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
     db.session.execute(sql, {"e_id":e_id, "tasks":tasks})
     
     db.session.commit()
     
-    return render_template("record.html", message="Tallennus onnistui!")
+    return render_template("record.html", tasks=all_tasks, message="Tallennus onnistui!")
 
 @app.route("/browse")
 def browse():

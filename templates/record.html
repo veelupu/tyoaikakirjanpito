@@ -25,9 +25,9 @@
 		<p>Lopetuskellonaika: <input type="time" name="time-end"></p>
 		Valitse työtehtävät:
 		<p>
-			<input type="checkbox" name="task" value="sähköposti"> sähköposti
-			<input type="checkbox" name="task" value="pöytäkirja"> pöytäkirja
-			<input type="checkbox" name="task" value="kokous"> kokous
+			{% for task in tasks %}
+			<input type="checkbox" name="task" value="{{ task }}">{{ task }}
+			{% endfor %}
 		</p>
 		Muistiinpanot:
 		<div>
@@ -37,7 +37,6 @@
 		<button type="submit">Tallenna</button>
 	</form>
 
-	
 	{% endblock %}
 </body>
 </html>
