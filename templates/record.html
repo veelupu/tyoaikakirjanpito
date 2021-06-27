@@ -13,7 +13,6 @@
 	</div>
 	{% endif %}
 	<button id="add-task" class="floating" >Lisää uusi työtehtävä</button>
-	<!--https://stackoverflow.com/questions/16562577/how-can-i-make-a-button-redirect-my-page-to-another-page-->
 	<script type="text/javascript">
 	    document.getElementById("add-task").onclick = function () {
 	        location.href = "/settings";
@@ -23,20 +22,36 @@
 		<p>Päivämäärä: <input type="text" name="datepicker" id="datepicker"></p>
 		<p>Aloituskellonaika: <input type="time" name="time-beg"></p>
 		<p>Lopetuskellonaika: <input type="time" name="time-end"></p>
-		Valitse työtehtävät:
+		<h3>Valitse työtehtävät:</h3>
 		<p>
 			{% for task in tasks %}
 			<input type="checkbox" name="task" value="{{ task }}">{{ task }}
 			{% endfor %}
 		</p>
-		Muistiinpanot:
+		<h3>Lisää tauko:</h3>
+		<p>
+			<input type="radio" name="pause" value="5"> 5 min.
+			<input type="radio" name="pause" value="10"> 10 min.
+			<input type="radio" name="pause" value="15"> 15 min.
+		</p>
+		<p>
+			<input type="radio" name="pause" value="20"> 20 min.
+			<input type="radio" name="pause" value="30"> 30 min.
+			<input type="radio" name="pause" value="45"> 45 min.
+		</p>
+		<p>
+			<input type="radio" name="pause" value="60"> 60 min.
+			<input type="radio" name="pause" value="90"> 90 min.
+			<input type="radio" name="pause" value="custom"> muu
+			<input type="number" name="custom">
+		</p>
+		<h3>Muistiinpanot:</h3>
 		<div>
 			<textarea name="notes" rows="5" cols="40"></textarea>
 		</div>
 		<br>
 		<button type="submit">Tallenna</button>
 	</form>
-
 	{% endblock %}
 </body>
 </html>
