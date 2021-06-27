@@ -18,6 +18,11 @@
 	<h2>
 		Tervetuloa pitämään kirjaa töistäsi!
 	</h2>
+	{% if message %}
+	<div class="message">
+		{{ message }}
+	</div>
+	{% endif %}
 	<div class="floating">
 		<h3>Kirjaudu sisään</h3>
 		<form action="/login" method="POST">
@@ -40,7 +45,7 @@
 	</ul>
 	
 	<h3>Rekisteröidy käyttäjäksi</h3>
-	<form action="/register" method="POST">
+	<form action="/register" method="POST" onsubmit="return check(this)">
 		<p>Käyttäjätunnus:<br>
 			<input type="text" name="username">
 		</p>
@@ -50,8 +55,20 @@
 		<p>Salasana uudestaan:<br>
 			<input type="password" name="password2">
 		</p>
-		<input type="submit" text="Kirjaudu" class="is-circle">
+		<button type="submit">Rekisteröidy</button>
 	</form>
-	<p>{{ message }}</p>
+	<script>
+	function check(form) {
+	    if (form.username.value.length > 25 || form.username.value.length < 3) {
+	        alert("Käyttäjänimi on liian pitkä tai lyhyt! Käyttäjänimen tulee olla vähintään 3 ja enintään 25 merkkiä pitkä.");
+	        return false;
+	    }
+	    if (form.password1.value.length < 8) {
+	        alert("Salasana on liian lyhyt. Salasanan tulee olla vähintään 8 merkkiä pitkä.");
+	        return false;
+	    }
+	    return true;
+	}
+	</script>
 </body>
 </html>
