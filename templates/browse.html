@@ -14,22 +14,14 @@
 		<button class="tablinks" onclick="openView(event, 'year')">Vuosi</button>
 	</div>
 	<div id="day" class="tabcontent">
-		<h3>Päivä</h3>
-		<p>Tänään olet tehnyt seuraavia asioita:</p>
 		<div id="entries-day">
 		</div>
 	</div>
 	<div id="week" class="tabcontent">
-		<h3>Viikko</h3>
-		<p>Tällä viikolla olet tehnyt seuraavia asioita:</p>
 	</div>
 	<div id="month" class="tabcontent">
-		<h3>Kuukausi</h3>
-		<p>Tässä kuussa olet tehnyt seuraavia asioita:</p>
 	</div>
 	<div id="year" class="tabcontent">
-		<h3>Vuosi</h3>
-		<p>Tänä vuonna olet tehnyt seuraavia asioita:</p>
 	</div>
 		
 	<!--https://www.w3schools.com/howto/howto_js_tabs.asp-->
@@ -55,6 +47,26 @@
 					const entries = $('#' + timeframe);
 					entries.empty();
 					
+					if( !(data && data.length) ) {
+						const message = $('<p>Ei tapahtumia valittuna ajanjaksona</p>');
+						entries.append(message);
+						return;
+					}
+					
+					if( timeframe == 'day' ) {
+						const title = $('<h3>Tänään olet tehnyt seuraavia asioita:</h3>');
+						entries.append(title);
+					} else if( timeframe == 'week' ) {
+						const title = $('<h3>Tällä viikolla olet tehnyt seuraavia asioita:</h3>');
+						entries.append(title);
+					} else if( timeframe == 'month' ) {
+						const title = $('<h3>Tässä kuussa olet tehnyt seuraavia asioita:</h3>');
+						entries.append(title);
+					} else {
+						const title = $('<h3>Tänä vuonna olet tehnyt seuraavia asioita:</h3>');
+						entries.append(title);
+					}
+
 					$.each(data, function( index, value ) {
 						const entryBody = $('<div class="entry-body"></div>');
 						const space = $('<br>');
