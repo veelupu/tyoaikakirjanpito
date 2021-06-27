@@ -165,7 +165,7 @@ def manage_settings():
     # Haetaan tehtävät tietokannasta
     id = session["id"]
     
-    sql = "SELECT content FROM task, worker_task WHERE worker_task.u_id=(:id) AND worker_task.t_id=task.id"
+    sql = "SELECT content FROM task, worker_task w_t WHERE w_t.w_id=(:id) AND w_t.t_id=task.id"
     result = db.session.execute(sql, {"id":id})
     tasks = result.fetchall()
     tasks = [x[0] for x in tasks]
