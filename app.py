@@ -140,18 +140,31 @@ def add_entry():
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     
-    date = request.form["datepicker"]
-    time_beg = request.form["time-beg"]
-    time_end = request.form["time-end"]
+    try:
+        date = request.form["datepicker"]
+        time_beg = request.form["time-beg"]
+        time_end = request.form["time-end"]
+    except ValueError:
+        return render_template("record.html", message="Tarkista antamasi tiedot! Työajan tallennusta varten pitää antaa vähintään päivämäärä sekä aloitus- ja lopetuskellonaika.")
+
     tasks = request.form.getlist("task")
-    pause = request.form["pause"]
-    notes = request.form["notes"]
+    pause = 0
+    
+    try:
+        pause = request.form["pause"]
+    except KeyError:
+        pass
     
     if pause == "custom":
         pause = request.form["custom"]
     
     if pause != None:
         pause = int(pause)/60
+    
+    notes = request.form["notes"]
+    
+    if len(notes) > 300:
+        return render_template("record.html", tasks=all_tasks, message="Liian paljon muistiinpanoja! Kirjoita enintään 300 merkkiä.")
 
     day = int(date[:2])
     month = int(date[3:5])
@@ -163,7 +176,7 @@ def add_entry():
         time_beg = datetime.datetime.strptime(time_beg, timeformat).time()
     except ValueError:
         return render_template("record.html", message="Tarkista aloituskellonaika! Anna aika muodossa hh:mm")
-    
+
     try:
         time_end = datetime.datetime.strptime(time_end, timeformat).time()
     except ValueError:
@@ -171,6 +184,9 @@ def add_entry():
     
     time_beg = datetime.datetime.combine(datetime.date(year, month, day), time_beg)
     time_end = datetime.datetime.combine(datetime.date(year, month, day), time_end)
+    
+    if time_beg > datetime.datetime.now():
+        return render_template("record.html", tasks=all_tasks, message="Ohops, tämä päivämäärä on tulevaisuudessa.")
     
     if time_beg > time_end:
         return render_template("record.html", message="Tarkista kellonajat! Aloituskellonajan pitää olla lopetuskellonaikaa aikaisempi.")
