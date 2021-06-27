@@ -104,6 +104,9 @@ def register():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     
+    if len(password1) < 8:
+        return render_template("index.html", items=options, message=("Liian lyhyt salasana! Salasanan tulee olla vähintään 8 merkkiä pitkä."))
+    
     if password1 != password2:
         return render_template("index.html", items=options, message=("Hups! Salasanat eivät täsmää. Tarkista, että kirjoitit saman salasanan molempiin kenttiin."))
     
