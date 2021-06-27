@@ -50,7 +50,24 @@ def logout():
     
 @app.route("/home", methods=["POST", "GET"])
 def home():
-    hours = [5, 34, 125, 876]
+    w_id = session["id"]
+    hours = [0, 0, 0, 0]
+    
+    timeframe = ["day", "week", "month", "year"]
+    
+    for i in range(4):
+        sql = """SELECT SUM (work_time) FROM (
+            SELECT e.time_end-e.time_beg work_time 
+            FROM entry e 
+            WHERE w_id=(:w_id) 
+            AND date_trunc(:timeframe, time_beg)=date_trunc(:timeframe, current_timestamp::timestamp)
+            GROUP BY e.id) AS work_times"""
+            
+        result = db.session.execute(sql, {"w_id":w_id, "timeframe":timeframe[i]})
+        db.session.commit()
+        
+        hours[i] = result.fetchone()[0]
+    
     return render_template("home.html", hours=hours)
     
 @app.route("/register", methods=["POST"])
@@ -85,10 +102,10 @@ def register():
 
 @app.route("/add-entry", methods=["GET", "POST"])
 def add_entry():
-    id = session["id"]
+    w_id = session["id"]
     
-    sql = "SELECT content FROM task, worker_task w_t WHERE w_t.w_id=(:id) AND w_t.t_id=task.id"
-    result = db.session.execute(sql, {"id":id})
+    sql = "SELECT content FROM task, worker_task w_t WHERE w_t.w_id=(:w_id) AND w_t.t_id=task.id"
+    result = db.session.execute(sql, {"w_id":w_id})
     all_tasks = result.fetchall()
     all_tasks = [x[0] for x in all_tasks]
     
@@ -130,8 +147,8 @@ def add_entry():
     if time_beg > time_end:
         return render_template("record.html", message="Tarkista kellonajat! Aloituskellonajan pitää olla lopetuskellonaikaa aikaisempi.")
     
-    sql = "INSERT INTO entry (time_beg, time_end, notes) VALUES(:time_beg, :time_end, :notes) RETURNING id"
-    result = db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes})
+    sql = "INSERT INTO entry (time_beg, time_end, notes, w_id) VALUES(:time_beg, :time_end, :notes, :w_id) RETURNING id"
+    result = db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes, "w_id":w_id})
     e_id = result.fetchone()[0]
     
     sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
