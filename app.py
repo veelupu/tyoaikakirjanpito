@@ -122,6 +122,10 @@ def add_entry():
     result = db.session.execute(sql, {"time_beg":time_beg, "time_end":time_end, "notes":notes})
     e_id = result.fetchone()[0]
     
+    #
+    ########## FIX ME! EI LIITOSTAULUA VAAN ENTRYYN KÄYTTÄJÄN ID
+    #
+    
     sql = "INSERT INTO task_entry (t_id, e_id) SELECT id, :e_id FROM task WHERE content=ANY (:tasks)"
     db.session.execute(sql, {"e_id":e_id, "tasks":tasks})
     
@@ -204,9 +208,24 @@ def change_password():
     else:
         return render_template("settings.html", message="Salasanan vaihtaminen epäonnistui – tarkista salasanasi oikeinkirjoitus.")
 
+@app.route("/add-task", methods=["POST"])
+def add_task():
+    w_id = session["id"]
+    content = request.form["new-task"]
+    
+    if len(content) > 100 or len(content) < 3:
+        return render_template("settings.html", message="Liian pitkä tai lyhyt työtehtävä! Käytä vähintään 3 ja enintään 100 merkkiä.")
+    
+    sql = "INSERT INTO task (content) VALUES(:content) RETURNING id"
+    result = db.session.execute(sql, {"content":content})
+    t_id = result.fetchone()[0]
+    
+    sql = "INSERT INTO worker_task (w_id, t_id) VALUES(:w_id, :t_id)"
+    db.session.execute(sql, {"w_id":w_id, "t_id":t_id})
 
+    db.session.commit()
     
-    
+    return redirect("/settings")
     
     
     

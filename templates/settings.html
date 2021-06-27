@@ -7,9 +7,7 @@
 </head>
 <body>
 	{% block content %}
-	<h2>Käyttäjän tiedot</h2>
-	<p>Käyttäjätunnus: {{ session.username }}</p>
-	<div>
+	<div class="floating">
 		<h2>Vaihda salasana</h2>
 		<form action="/change-password" method="POST">
 			<p>Salasana:<br>
@@ -23,14 +21,25 @@
 			</p>
 			<input type="submit">
 		</form>
-		<p>{{ message }}</p>
 	</div>
+	{% if message %}
+	<div class="message">
+		{{ message }}
+	</div>
+	{% endif %}
+	<h2>Käyttäjän tiedot</h2>
+	<p>Käyttäjätunnus: {{ session.username }}</p>
 	<h2>Tallennetut työtehtävät</h2>
 	<ul>
 		{% for task in tasks %}
 		<li>{{ task }} {% endfor %}
 		</li>
 	</ul>
+	<form action="/add-task" method="POST">
+		Lisää työtehtävä:
+		<input type="text" name="new-task">
+		<button type="submit">Tallenna</button>
+	</form>
 	{% endblock %}
 </body>
 </html>
