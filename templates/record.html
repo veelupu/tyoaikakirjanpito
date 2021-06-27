@@ -19,6 +19,7 @@
 	    };
 	</script>
 	<form action="/add-entry" method="POST" class="entry-form">
+		<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 		<p>Päivämäärä: <input type="text" name="datepicker" id="datepicker"></p>
 		<p>Aloituskellonaika: <input type="time" name="time-beg"></p>
 		<p>Lopetuskellonaika: <input type="time" name="time-end"></p>

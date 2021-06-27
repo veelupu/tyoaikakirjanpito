@@ -10,6 +10,7 @@
 	<div class="floating">
 		<h2>Vaihda salasana</h2>
 		<form action="/change-password" method="POST">
+			<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 			<p>Salasana:<br>
 				<input type="password" name="password-old">
 			</p>
@@ -36,6 +37,7 @@
 		</li>
 	</ul>
 	<form action="/add-task" method="POST">
+		<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 		Lisää työtehtävä:
 		<input type="text" name="new-task">
 		<button type="submit">Tallenna</button>
