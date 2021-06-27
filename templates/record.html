@@ -12,6 +12,13 @@
 		{{ message }}
 	</div>
 	{% endif %}
+	<button id="add-task" class="floating" >Lisää uusi työtehtävä</button>
+	<!--https://stackoverflow.com/questions/16562577/how-can-i-make-a-button-redirect-my-page-to-another-page-->
+	<script type="text/javascript">
+	    document.getElementById("add-task").onclick = function () {
+	        location.href = "/settings";
+	    };
+	</script>
 	<form action="/add-entry" method="POST" class="entry-form">
 		<p>Päivämäärä: <input type="text" name="datepicker" id="datepicker"></p>
 		<p>Aloituskellonaika: <input type="time" name="time-beg"></p>
@@ -21,7 +28,6 @@
 			<input type="checkbox" name="task" value="sähköposti"> sähköposti
 			<input type="checkbox" name="task" value="pöytäkirja"> pöytäkirja
 			<input type="checkbox" name="task" value="kokous"> kokous
-			<button type="button">Lisää uusi työtehtävä</button>
 		</p>
 		Muistiinpanot:
 		<div>
@@ -30,6 +36,7 @@
 		<br>
 		<button type="submit">Tallenna</button>
 	</form>
+
 	
 	{% endblock %}
 </body>
